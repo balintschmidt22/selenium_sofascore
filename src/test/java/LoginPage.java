@@ -6,16 +6,16 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.By;
 
 
-class MainPage extends PageBase {
-    private By myAccountBy = By.xpath("//div[@class='my-account__top']");
-    private By searchBarBy = By.xpath("//input[@type='search' and @placeholder='Termékkeresés...']");
+class LoginPage extends PageBase {
+    private By myAccountBy = By.xpath("//span[@id='tosca-headerLogin']");
     private By usernameBy = By.id("gigya-loginID-28776771034217040");
     private By passwordBy = By.id("gigya-password-152373988132129340");
     private By loginBy = By.cssSelector("input[type='submit'][value='Bejelentkezés']");
+    private By logoutBy = By.xpath("//a[@href='/store/logout']");
 
-    public MainPage(WebDriver driver) {
+    public LoginPage(WebDriver driver) {
         super(driver);
-        this.driver.get("https://www.hervis.hu/shop/");
+        this.driver.get("https://www.hervis.hu/store/login");
 
         try{
             WebDriverWait wait = new WebDriverWait(driver, 8);
@@ -30,30 +30,13 @@ class MainPage extends PageBase {
             if (acceptButton != null) {
                 acceptButton.click();
             }
-        } 
+        }
         catch (Exception e) {
             
         }
     }
-    
-    public String getTitleText() {
-        return driver.getTitle();
-    }
-    
-    public SearchResultPage search(String searchQuery) {
-        WebDriverWait wait = new WebDriverWait(driver, 15);
-        WebElement searchInput = wait.until(ExpectedConditions.visibilityOfElementLocated(searchBarBy));
-
-        searchInput.click();
-
-        searchInput.sendKeys(searchQuery + "\n");
-
-        return new SearchResultPage(this.driver);
-    }
 
     public LoginResultPage login(String username, String password){
-        this.waitAndReturnElement(myAccountBy).click();
-
         WebDriverWait wait = new WebDriverWait(driver, 15);
 
         WebElement usernameInput = wait.until(ExpectedConditions.elementToBeClickable(usernameBy));
@@ -66,5 +49,17 @@ class MainPage extends PageBase {
         loginButton.click();
         
         return new LoginResultPage(this.driver);
+    }
+
+    public LogoutResultPage logout(){
+        WebDriverWait wait = new WebDriverWait(driver, 15);
+
+        WebElement myAccount = wait.until(ExpectedConditions.elementToBeClickable(myAccountBy));
+        myAccount.click();
+
+        WebElement logoutButton = wait.until(ExpectedConditions.elementToBeClickable(logoutBy));
+        logoutButton.click();
+
+        return new LogoutResultPage(this.driver);
     }
 }
