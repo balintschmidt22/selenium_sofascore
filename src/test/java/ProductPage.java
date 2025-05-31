@@ -11,7 +11,7 @@ class ProductPage extends PageBase {
     private By selectBy = By.xpath("//select");
     private By addToCartBy = By.xpath("//hv-add-to-cart[button]");
     private By cartBy = By.xpath("//div[contains(@class, 'mini-cart__amount')]");
-    public String value = "";
+    public String productInCart = "";
 
     public ProductPage(WebDriver driver, String product) {
         super(driver);
@@ -47,7 +47,7 @@ class ProductPage extends PageBase {
         addToCart.click();
 
         WebElement cart = wait.until(ExpectedConditions.elementToBeClickable(cartBy));
-        value = cart.getText();
+        productInCart = cart.getText();
         
         return new ProductResultPage(driver); 
     }

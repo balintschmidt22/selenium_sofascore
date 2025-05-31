@@ -4,6 +4,8 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import java.util.*;  
 import java.net.URL;
+
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import java.io.FileInputStream;
 import java.net.MalformedURLException;
@@ -21,6 +23,8 @@ public class SeleniumTest {
         driver = new RemoteWebDriver(new URL("http://selenium:4444/wd/hub"), options);
         driver.manage().window().maximize();
         driver.manage().deleteAllCookies();
+        options.addArguments("--disable-notifications");
+        options.addArguments("--incognito");
 
         mainPage = new MainPage(driver);
 
@@ -90,7 +94,25 @@ public class SeleniumTest {
         ProductPage productPage = new ProductPage(driver, "Felszerel%C3%A9s/Fitneszg%C3%A9pek-%C3%A9s-kieg%C3%A9sz%C3%ADt%C5%91k/Kieg%C3%A9sz%C3%ADt%C5%91k/Essential/p/COLOR-3317298");
 
         productPage.putInShoppingCart("M");
-        Assert.assertTrue(Integer.parseInt(productPage.value) >= 1);
+        Assert.assertTrue(Integer.parseInt(productPage.productInCart) >= 1);
+    }
+
+    @Test
+    public void testStaticPages() {
+        String[] staticPages = {
+            "https://www.hervis.hu/store/faq",
+            "https://www.hervis.hu/store/impresszum",
+            "https://www.hervis.hu/store/aszf",
+        };
+        for (String url : staticPages) {
+            driver.get(url);
+
+            String title = driver.getTitle();
+            assertFalse("Page title is empty for URL: " + url, title.trim().isEmpty());
+
+            assertTrue("Page content not loaded: " + url,
+            driver.getPageSource().toLowerCase().contains("hervis"));
+        }
     }
 
     @Test
